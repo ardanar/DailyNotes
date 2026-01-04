@@ -14,7 +14,11 @@ export default function HomeScreen() {
   const { notes } = useNotes();
 
   const renderNoteItem = ({ item }: { item: Note }) => (
-    <View style={styles.noteCard}>
+    <TouchableOpacity
+      style={styles.noteCard}
+      onPress={() => router.push({ pathname: '/edit-note', params: { id: item.id } } as any)}
+      activeOpacity={0.7}
+    >
       <View style={styles.noteHeader}>
         <Text style={styles.noteTitle}>{item.title}</Text>
         <View
@@ -37,7 +41,7 @@ export default function HomeScreen() {
           Enerji: {getEnergyText(item.energyLevel)}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -45,13 +49,6 @@ export default function HomeScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Günlük Notlarım</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => router.push('/create-note' as any)}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="add" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
       </View>
 
       {/* Notes List */}
@@ -60,7 +57,7 @@ export default function HomeScreen() {
           <Ionicons name="document-text-outline" size={64} color="#D1D5DB" />
           <Text style={styles.emptyText}>Henüz notunuz yok</Text>
           <Text style={styles.emptySubtext}>
-            Sağ üstteki butona basarak ilk notunuzu oluşturun
+            Sağ alttaki butona basarak ilk notunuzu oluşturun
           </Text>
         </View>
       ) : (
@@ -72,6 +69,15 @@ export default function HomeScreen() {
           showsVerticalScrollIndicator={false}
         />
       )}
+
+      {/* Floating Action Button */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => router.push('/create-note' as any)}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="add" size={28} color="#FFFFFF" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -82,9 +88,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     paddingHorizontal: 24,
     paddingTop: 60,
     paddingBottom: 24,
@@ -93,36 +96,49 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E5E7EB',
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     color: '#111827',
+    letterSpacing: -0.5,
   },
-  addButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  fab: {
+    position: 'absolute',
+    right: 24,
+    bottom: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: '#2563EB',
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#2563EB',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  listContent: {
+    padding: 24,
+    paddingBottom: 100,
+  },
+  noteCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 1,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  listContent: {
-    padding: 16,
-  },
-  noteCard: {
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   noteHeader: {
     flexDirection: 'row',
