@@ -11,6 +11,7 @@ features/
   <feature-name>/
     screens/        # Feature'a özel ekranlar
     components/     # Feature'a özel component'ler
+    context/        # Feature'a özel React Context'leri
     hooks/          # Feature'a özel hook'lar
     types/          # Feature'a özel TypeScript tipleri
     utils/          # Feature'a özel utility fonksiyonları
