@@ -47,8 +47,12 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     // 401 Unauthorized - Token geçersiz veya süresi dolmuş
     if (error.response?.status === 401) {
-      await AsyncStorage.removeItem('access_token');
-      router.replace('/login');
+      const url = error.config?.url || '';
+      // Login ve register endpoint'lerinde yönlendirme yapma
+      if (!url.includes('/auth/login') && !url.includes('/auth/register')) {
+        await AsyncStorage.removeItem('access_token');
+        router.replace('/login');
+      }
     }
     
     return Promise.reject(error);

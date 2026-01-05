@@ -8,6 +8,9 @@ interface NotesContextType {
   notes: Note[];
   loading: boolean;
   error: ApiError | null;
+  createError: ApiError | null;
+  updateError: ApiError | null;
+  deleteError: ApiError | null;
   addNote: (note: Omit<Note, 'id' | 'createdAt'>) => Promise<void>;
   updateNote: (id: string, note: Omit<Note, 'id' | 'createdAt'>) => Promise<void>;
   deleteNote: (id: string) => Promise<void>;
@@ -19,9 +22,9 @@ const NotesContext = createContext<NotesContextType | undefined>(undefined);
 export function NotesProvider({ children }: { children: ReactNode }) {
   // API hooks'larını kullan
   const { notes, loading, error: notesError, refetch } = useNotesHook();
-  const { createNote: createNoteApi, loading: creating } = useCreateNote();
-  const { updateNote: updateNoteApi, loading: updating } = useUpdateNote();
-  const { deleteNote: deleteNoteApi, loading: deleting } = useDeleteNote();
+  const { createNote: createNoteApi, loading: creating, error: createError } = useCreateNote();
+  const { updateNote: updateNoteApi, loading: updating, error: updateError } = useUpdateNote();
+  const { deleteNote: deleteNoteApi, loading: deleting, error: deleteError } = useDeleteNote();
 
   // Not oluştur
   const addNote = async (note: Omit<Note, 'id' | 'createdAt'>) => {
@@ -76,6 +79,9 @@ export function NotesProvider({ children }: { children: ReactNode }) {
         notes,
         loading: loading || creating || updating || deleting,
         error: notesError,
+        createError,
+        updateError,
+        deleteError,
         addNote,
         updateNote,
         deleteNote,

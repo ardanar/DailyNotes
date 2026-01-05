@@ -63,6 +63,72 @@ export const apiClient = {
   },
 };
 
+// Backend'den gelen hata mesajlarını Türkçe'ye çevir
+function translateErrorMessage(englishMessage: string, field?: string): string {
+  const lowerMessage = englishMessage.toLowerCase();
+  
+  // Email ile ilgili hatalar
+  if (lowerMessage.includes('email') || lowerMessage.includes('e-posta') || field === 'email') {
+    if (lowerMessage.includes('required') || lowerMessage.includes('field required')) {
+      return 'E-posta adresi gereklidir';
+    }
+    if (lowerMessage.includes('invalid') || lowerMessage.includes('value error') || lowerMessage.includes('not a valid')) {
+      return 'Geçerli bir e-posta adresi giriniz';
+    }
+    if (lowerMessage.includes('already exists') || lowerMessage.includes('already registered') || lowerMessage.includes('duplicate')) {
+      return 'Bu e-posta adresi zaten kullanılıyor';
+    }
+    if (lowerMessage.includes('not found')) {
+      return 'Bu e-posta adresine kayıtlı kullanıcı bulunamadı';
+    }
+  }
+  
+  // Şifre ile ilgili hatalar
+  if (lowerMessage.includes('password') || lowerMessage.includes('şifre') || field === 'password') {
+    if (lowerMessage.includes('required') || lowerMessage.includes('field required')) {
+      return 'Şifre gereklidir';
+    }
+    if (lowerMessage.includes('too short') || lowerMessage.includes('minimum') || lowerMessage.includes('at least')) {
+      return 'Şifre en az 6 karakter olmalıdır';
+    }
+    if (lowerMessage.includes('incorrect') || lowerMessage.includes('wrong') || lowerMessage.includes('invalid')) {
+      return 'Şifre hatalı';
+    }
+  }
+  
+  // Ad soyad ile ilgili hatalar
+  if (lowerMessage.includes('full_name') || lowerMessage.includes('full name') || field === 'full_name') {
+    if (lowerMessage.includes('required') || lowerMessage.includes('field required')) {
+      return 'Ad soyad gereklidir';
+    }
+  }
+  
+  // Genel hata mesajları
+  if (lowerMessage.includes('unauthorized') || lowerMessage.includes('invalid credentials')) {
+    return 'E-posta veya şifre hatalı';
+  }
+  if (lowerMessage.includes('not found')) {
+    return 'Bulunamadı';
+  }
+  if (lowerMessage.includes('bad request') || lowerMessage.includes('validation error')) {
+    return 'Geçersiz bilgiler. Lütfen kontrol edin';
+  }
+  if (lowerMessage.includes('network') || lowerMessage.includes('timeout')) {
+    return 'Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin';
+  }
+  if (lowerMessage.includes('server error') || lowerMessage.includes('internal error')) {
+    return 'Sunucu hatası. Lütfen daha sonra tekrar deneyin';
+  }
+  
+  // Eğer mesaj zaten Türkçe karakterler içeriyorsa olduğu gibi döndür
+  if (/[ğüşıöçĞÜŞİÖÇ]/.test(englishMessage)) {
+    return englishMessage;
+  }
+  
+  // Diğer durumlarda genel mesaj
+  return 'Bir hata oluştu. Lütfen tekrar deneyin';
+}
+
 // Hata yönetimi helper fonksiyonu
 // Backend'den gelen hataları ApiError formatına çevirir
 function handleApiError(error: unknown): ApiError {
@@ -73,27 +139,40 @@ function handleApiError(error: unknown): ApiError {
     // Backend'den gelen hata mesajını al
     let message = 'Bir hata oluştu';
     
-    // 404 Not Found hatası için özel mesaj
-    if (axiosError.response?.status === 404) {
-      message = 'Endpoint bulunamadı. Lütfen API URL\'ini kontrol edin.';
+    // HTTP status koduna göre özel mesajlar
+    if (axiosError.response?.status === 401) {
+      message = 'E-posta veya şifre hatalı. Lütfen tekrar deneyin.';
+    } else if (axiosError.response?.status === 404) {
+      message = 'İstenen kaynak bulunamadı';
+    } else if (axiosError.response?.status === 400) {
+      message = 'Geçersiz bilgiler. Lütfen kontrol edin.';
+    } else if (axiosError.response?.status === 409) {
+      message = 'Bu e-posta adresi zaten kullanılıyor.';
+    } else if (axiosError.response?.status === 500) {
+      message = 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.';
+    } else if (axiosError.response?.status === 0 || !axiosError.response) {
+      message = 'Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin.';
     }
     // FastAPI formatında detail array'i varsa
     else if (responseData?.detail) {
       if (Array.isArray(responseData.detail) && responseData.detail.length > 0) {
         // Array formatında: [{ loc: [...], msg: "...", type: "..." }]
-        message = responseData.detail[0].msg || responseData.detail[0].message || message;
+        const firstError = responseData.detail[0];
+        const field = firstError.loc?.[firstError.loc.length - 1];
+        const englishMsg = firstError.msg || firstError.message || '';
+        message = translateErrorMessage(englishMsg, field);
       } else if (typeof responseData.detail === 'string') {
         // String formatında: "Hata mesajı"
-        message = responseData.detail;
+        message = translateErrorMessage(responseData.detail);
       }
     } 
     // Backend direkt message gönderiyorsa
     else if (responseData?.message) {
-      message = responseData.message;
+      message = translateErrorMessage(responseData.message);
     }
     // Axios'un kendi mesajı
     else if (axiosError.message) {
-      message = axiosError.message;
+      message = translateErrorMessage(axiosError.message);
     }
     
     return {
@@ -105,7 +184,7 @@ function handleApiError(error: unknown): ApiError {
   
   // Axios hatası değilse (network hatası vs.)
   return {
-    message: 'Beklenmeyen bir hata oluştu',
+    message: 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.',
   };
 }
 

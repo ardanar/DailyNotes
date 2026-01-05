@@ -3,7 +3,7 @@ import AuthInput from '@/features/auth/components/AuthInput';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -18,14 +18,29 @@ import { useNotes } from '../context/NotesContext';
 import { EnergyLevel, NoteMod } from '../types';
 
 export default function CreateNoteScreen() {
-  const { addNote, loading } = useNotes();
+  const { addNote, loading, createError } = useNotes();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [mod, setMod] = useState<NoteMod>('normal');
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel>('medium');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Hata geldiğinde mesajı göster
+  useEffect(() => {
+    if (createError) {
+      const message = createError.message || 'Not oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.';
+      setErrorMessage(message);
+    } else {
+      setErrorMessage(null);
+    }
+  }, [createError]);
 
   const handleCreate = async () => {
+    // Önce hata mesajını temizle
+    setErrorMessage(null);
+
     if (!title.trim() || !content.trim()) {
+      setErrorMessage('Başlık ve not içeriği gereklidir.');
       return;
     }
 
@@ -39,7 +54,8 @@ export default function CreateNoteScreen() {
       router.back();
     } catch (error) {
       // Hata durumunda kullanıcıya gösterilebilir
-      console.error('Not oluşturulamadı:', error);
+      const message = error instanceof Error ? error.message : 'Not oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.';
+      setErrorMessage(message);
     }
   };
 
@@ -159,6 +175,13 @@ export default function CreateNoteScreen() {
               </View>
             </View>
 
+            {/* Error Message */}
+            {errorMessage && (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              </View>
+            )}
+
             {/* Create Button */}
             <AuthButton
               title={loading ? "Oluşturuluyor..." : "Oluştur"}
@@ -271,6 +294,17 @@ const styles = StyleSheet.create({
   },
   createButton: {
     marginTop: 0,
+  },
+  errorContainer: {
+    backgroundColor: '#FEE2E2',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  errorText: {
+    color: '#DC2626',
+    fontSize: 14,
+    textAlign: 'center',
   },
 });
 

@@ -4,9 +4,10 @@ import { StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } f
 
 interface AuthPasswordInputProps extends Omit<TextInputProps, 'secureTextEntry'> {
   label: string;
+  error?: string;
 }
 
-export default function AuthPasswordInput({ label, style, ...props }: AuthPasswordInputProps) {
+export default function AuthPasswordInput({ label, error, style, ...props }: AuthPasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -14,7 +15,7 @@ export default function AuthPasswordInput({ label, style, ...props }: AuthPasswo
       <Text style={styles.label}>{label}</Text>
       <View style={styles.passwordContainer}>
         <TextInput
-          style={[styles.input, styles.passwordInput, style]}
+          style={[styles.input, styles.passwordInput, error && styles.inputError, style]}
           placeholderTextColor="#9CA3AF"
           secureTextEntry={!showPassword}
           autoCapitalize="none"
@@ -30,6 +31,7 @@ export default function AuthPasswordInput({ label, style, ...props }: AuthPasswo
           <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={24} style={styles.showPasswordIcon} />
         </TouchableOpacity>
       </View>
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 }
@@ -58,8 +60,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#111827',
   },
+  inputError: {
+    borderColor: '#EF4444',
+    backgroundColor: '#FEF2F2',
+  },
   passwordInput: {
     paddingRight: 80,
+  },
+  errorText: {
+    fontSize: 12,
+    color: '#EF4444',
+    marginTop: 4,
+    marginLeft: 4,
   },
   showPasswordButton: {
     position: 'absolute',

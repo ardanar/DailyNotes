@@ -20,11 +20,12 @@ import { EnergyLevel, NoteMod } from '../types';
 
 export default function EditNoteScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { notes, updateNote, deleteNote, loading } = useNotes();
+  const { notes, updateNote, deleteNote, loading, updateError } = useNotes();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [mod, setMod] = useState<NoteMod>('normal');
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel>('medium');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const note = notes.find((n) => n.id === id);
 
@@ -37,8 +38,22 @@ export default function EditNoteScreen() {
     }
   }, [note]);
 
+  // Hata geldiğinde mesajı göster
+  useEffect(() => {
+    if (updateError) {
+      const message = updateError.message || 'Not güncellenirken bir hata oluştu. Lütfen tekrar deneyin.';
+      setErrorMessage(message);
+    } else {
+      setErrorMessage(null);
+    }
+  }, [updateError]);
+
   const handleUpdate = async () => {
+    // Önce hata mesajını temizle
+    setErrorMessage(null);
+
     if (!title.trim() || !content.trim() || !id) {
+      setErrorMessage('Başlık ve not içeriği gereklidir.');
       return;
     }
 
@@ -52,7 +67,8 @@ export default function EditNoteScreen() {
       router.back();
     } catch (error) {
       // Hata durumunda kullanıcıya gösterilebilir
-      console.error('Not güncellenemedi:', error);
+      const message = error instanceof Error ? error.message : 'Not güncellenirken bir hata oluştu. Lütfen tekrar deneyin.';
+      setErrorMessage(message);
     }
   };
 
@@ -228,6 +244,13 @@ export default function EditNoteScreen() {
               </View>
             </View>
 
+            {/* Error Message */}
+            {errorMessage && (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              </View>
+            )}
+
             {/* Update Button */}
             <AuthButton
               title={loading ? "Güncelleniyor..." : "Güncelle"}
@@ -351,6 +374,17 @@ const styles = StyleSheet.create({
   },
   updateButton: {
     marginTop: 0,
+  },
+  errorContainer: {
+    backgroundColor: '#FEE2E2',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  errorText: {
+    color: '#DC2626',
+    fontSize: 14,
+    textAlign: 'center',
   },
 });
 
