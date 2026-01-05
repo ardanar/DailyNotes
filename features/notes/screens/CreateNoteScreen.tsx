@@ -5,38 +5,42 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useNotes } from '../context/NotesContext';
 import { EnergyLevel, NoteMod } from '../types';
 
 export default function CreateNoteScreen() {
-  const { addNote } = useNotes();
+  const { addNote, loading } = useNotes();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [mod, setMod] = useState<NoteMod>('normal');
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel>('medium');
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!title.trim() || !content.trim()) {
       return;
     }
 
-    addNote({
-      title: title.trim(),
-      content: content.trim(),
-      mod,
-      energyLevel,
-    });
-
-    router.back();
+    try {
+      await addNote({
+        title: title.trim(),
+        content: content.trim(),
+        mod,
+        energy_level: energyLevel,
+      });
+      router.back();
+    } catch (error) {
+      // Hata durumunda kullanıcıya gösterilebilir
+      console.error('Not oluşturulamadı:', error);
+    }
   };
 
   const modOptions: { value: NoteMod; label: string }[] = [
@@ -157,9 +161,10 @@ export default function CreateNoteScreen() {
 
             {/* Create Button */}
             <AuthButton
-              title="Oluştur"
+              title={loading ? "Oluşturuluyor..." : "Oluştur"}
               onPress={handleCreate}
               style={styles.createButton}
+              disabled={loading}
             />
           </View>
         </View>

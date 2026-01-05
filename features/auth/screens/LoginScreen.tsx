@@ -3,17 +3,34 @@ import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { useNotes } from '@/features/notes/context/NotesContext';
 import AuthButton from '../components/AuthButton';
 import AuthInput from '../components/AuthInput';
 import AuthPasswordInput from '../components/AuthPasswordInput';
+import { useLogin } from '../hooks';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login, loading, error } = useLogin();
+  const { refetch } = useNotes();
 
-  const handleLogin = () => {
-    console.log('Login:', { email, password });
-    router.replace('/(tabs)');
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      return;
+    }
+
+    const response = await login({
+      email: email.trim(),
+      password: password.trim(),
+    });
+
+    if (response) {
+      // Başarılı - token otomatik kaydedildi
+      // Notları yeniden çek (yeni kullanıcının notları için)
+      refetch();
+      router.replace('/(tabs)');
+    }
   };
 
   return (
@@ -59,8 +76,19 @@ export default function LoginScreen() {
               <Text style={styles.forgotPasswordText}>Şifremi Unuttum</Text>
             </TouchableOpacity>
 
+            {/* Error Message */}
+            {error && (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error.message}</Text>
+              </View>
+            )}
+
             {/* Login Button */}
-            <AuthButton title="Giriş Yap" onPress={handleLogin} />
+            <AuthButton
+              title={loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+              onPress={handleLogin}
+              disabled={loading}
+            />
 
             {/* Register Link */}
             <View style={styles.registerContainer}>
@@ -128,5 +156,16 @@ const styles = StyleSheet.create({
     color: '#2563EB',
     fontWeight: '600',
     fontSize: 14,
+  },
+  errorContainer: {
+    backgroundColor: '#FEE2E2',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  errorText: {
+    color: '#DC2626',
+    fontSize: 14,
+    textAlign: 'center',
   },
 });

@@ -18,7 +18,9 @@ export default function AuthPasswordInput({ label, style, ...props }: AuthPasswo
           placeholderTextColor="#9CA3AF"
           secureTextEntry={!showPassword}
           autoCapitalize="none"
-          autoComplete="password"
+          autoComplete="off"
+          textContentType="none"
+          passwordRules=""
           {...props}
         />
         <TouchableOpacity

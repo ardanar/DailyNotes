@@ -1,9 +1,20 @@
+import { authApi } from '@/features/auth/api/authApi';
+import { useProfile } from '@/features/auth/hooks';
+import { useNotes } from '@/features/notes/context/NotesContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function SettingsScreen() {
-  const handleLogout = () => {
+  const { refetch } = useNotes();
+  const { profile, loading: profileLoading } = useProfile();
+
+  const handleLogout = async () => {
+    // Token'ı temizle
+    await authApi.logout();
+    // Notları temizlemek için refetch yap (token olmadığı için boş liste dönecek)
+    refetch();
+    // Login sayfasına yönlendir
     router.replace('/login');
   };
 
@@ -24,8 +35,8 @@ export default function SettingsScreen() {
           <View style={styles.avatarContainer}>
             <Ionicons name="person" size={40} color="#2563EB" />
           </View>
-          <Text style={styles.userName}>Kullanıcı Adı</Text>
-          <Text style={styles.userEmail}>kullanici@email.com</Text>
+          <Text style={styles.userName}>{profile?.full_name || 'Kullanıcı'}</Text>
+          <Text style={styles.userEmail}>{profile?.email || 'Email bilgisi yüklenemedi'}</Text>
         </View>
 
         {/* Spacer */}
@@ -96,6 +107,9 @@ const styles = StyleSheet.create({
   userEmail: {
     fontSize: 14,
     color: '#6B7280',
+  },
+  loadingIndicator: {
+    marginVertical: 8,
   },
   logoutButton: {
     paddingVertical: 16,

@@ -8,10 +8,10 @@ import {
 } from '@/features/notes/utils/noteHelpers';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
-  const { notes } = useNotes();
+  const { notes, loading, error, refetch } = useNotes();
 
   const renderNoteItem = ({ item }: { item: Note }) => (
     <TouchableOpacity
@@ -38,7 +38,7 @@ export default function HomeScreen() {
       <View style={styles.noteFooter}>
         <Text style={styles.noteDate}>{formatDate(item.createdAt)}</Text>
         <Text style={styles.energyText}>
-          Enerji: {getEnergyText(item.energyLevel)}
+          Enerji: {getEnergyText(item.energy_level)}
         </Text>
       </View>
     </TouchableOpacity>
@@ -52,7 +52,24 @@ export default function HomeScreen() {
       </View>
 
       {/* Notes List */}
-      {notes.length === 0 ? (
+      {loading && notes.length === 0 ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#2563EB" />
+          <Text style={styles.loadingText}>Notlar yükleniyor...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
+          <Text style={styles.errorText}>Bir hata oluştu</Text>
+          <Text style={styles.errorSubtext}>{error.message}</Text>
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={refetch}
+          >
+            <Text style={styles.retryButtonText}>Tekrar Dene</Text>
+          </TouchableOpacity>
+        </View>
+      ) : notes.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="document-text-outline" size={64} color="#D1D5DB" />
           <Text style={styles.emptyText}>Henüz notunuz yok</Text>
@@ -67,6 +84,8 @@ export default function HomeScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
+          refreshing={loading}
+          onRefresh={refetch}
         />
       )}
 
@@ -202,5 +221,46 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6B7280',
     textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 48,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#6B7280',
+    marginTop: 16,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 48,
+  },
+  errorText: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#EF4444',
+    marginTop: 24,
+    marginBottom: 8,
+  },
+  errorSubtext: {
+    fontSize: 14,
+    color: '#6B7280',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  retryButton: {
+    backgroundColor: '#2563EB',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

@@ -7,7 +7,7 @@ export interface Note {
   title: string;
   content: string;
   mod: NoteMod;
-  energyLevel: EnergyLevel;
+  energy_level: EnergyLevel;
   createdAt: Date;
 }
 

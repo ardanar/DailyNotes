@@ -1,82 +1,87 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import { ApiError } from '@/shared/api/types';
+import React, { createContext, ReactNode, useContext } from 'react';
+import { CreateNoteRequest, UpdateNoteRequest } from '../api/types';
+import { useCreateNote, useDeleteNote, useNotes as useNotesHook, useUpdateNote } from '../hooks';
 import { Note } from '../types';
 
 interface NotesContextType {
   notes: Note[];
-  addNote: (note: Omit<Note, 'id' | 'createdAt'>) => void;
-  updateNote: (id: string, note: Omit<Note, 'id' | 'createdAt'>) => void;
-  deleteNote: (id: string) => void;
+  loading: boolean;
+  error: ApiError | null;
+  addNote: (note: Omit<Note, 'id' | 'createdAt'>) => Promise<void>;
+  updateNote: (id: string, note: Omit<Note, 'id' | 'createdAt'>) => Promise<void>;
+  deleteNote: (id: string) => Promise<void>;
+  refetch: () => void;
 }
 
 const NotesContext = createContext<NotesContextType | undefined>(undefined);
 
-const mockNotes: Note[] = [
-  {
-    id: '1',
-    title: 'Proje Toplantısı',
-    content: 'Yarın saat 14:00\'te ekibimizle yeni proje hakkında toplantı yapacağız. Gündem maddelerini hazırlamayı unutma.',
-    mod: 'important',
-    energyLevel: 'high',
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 saat önce
-  },
-  {
-    id: '2',
-    title: 'Alışveriş Listesi',
-    content: 'Market alışverişi: Süt, yumurta, ekmek, meyve ve sebze. Ayrıca temizlik malzemeleri de alınmalı.',
-    mod: 'normal',
-    energyLevel: 'medium',
-    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 saat önce
-  },
-  {
-    id: '3',
-    title: 'Acil: Faturalar',
-    content: 'Elektrik ve su faturalarını bu hafta içinde ödemem gerekiyor. Son ödeme tarihi: 15 Ocak',
-    mod: 'urgent',
-    energyLevel: 'high',
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 gün önce
-  },
-  {
-    id: '4',
-    title: 'Spor Programı',
-    content: 'Haftalık spor rutinimi güncelle: Pazartesi koşu, Çarşamba yoga, Cuma ağırlık antrenmanı',
-    mod: 'normal',
-    energyLevel: 'medium',
-    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 gün önce
-  },
-];
-
 export function NotesProvider({ children }: { children: ReactNode }) {
-  const [notes, setNotes] = useState<Note[]>(mockNotes);
+  // API hooks'larını kullan
+  const { notes, loading, error: notesError, refetch } = useNotesHook();
+  const { createNote: createNoteApi, loading: creating } = useCreateNote();
+  const { updateNote: updateNoteApi, loading: updating } = useUpdateNote();
+  const { deleteNote: deleteNoteApi, loading: deleting } = useDeleteNote();
 
-  const addNote = (note: Omit<Note, 'id' | 'createdAt'>) => {
-    const newNote: Note = {
-      ...note,
-      id: Date.now().toString(),
-      createdAt: new Date(),
+  // Not oluştur
+  const addNote = async (note: Omit<Note, 'id' | 'createdAt'>) => {
+    const createRequest: CreateNoteRequest = {
+      title: note.title,
+      content: note.content,
+      mod: note.mod,
+      energy_level: note.energy_level,
     };
-    setNotes((prev) => [newNote, ...prev]);
+
+    const createdNote = await createNoteApi(createRequest);
+    if (createdNote) {
+      // Başarılı - liste otomatik yenilenecek (useNotes hook'u refetch edecek)
+      refetch();
+    } else {
+      throw new Error('Not oluşturulamadı');
+    }
   };
 
-  const updateNote = (id: string, note: Omit<Note, 'id' | 'createdAt'>) => {
-    setNotes((prev) =>
-      prev.map((n) => {
-        if (n.id === id) {
-          return {
-            ...n,
-            ...note,
-          };
-        }
-        return n;
-      })
-    );
+  // Notu güncelle
+  const updateNote = async (id: string, note: Omit<Note, 'id' | 'createdAt'>) => {
+    const updateRequest: UpdateNoteRequest = {
+      title: note.title,
+      content: note.content,
+      mod: note.mod,
+      energy_level: note.energy_level,
+    };
+
+    const updatedNote = await updateNoteApi(id, updateRequest);
+    if (updatedNote) {
+      // Başarılı - liste otomatik yenilenecek
+      refetch();
+    } else {
+      throw new Error('Not güncellenemedi');
+    }
   };
 
-  const deleteNote = (id: string) => {
-    setNotes((prev) => prev.filter((note) => note.id !== id));
+  // Notu sil
+  const deleteNote = async (id: string) => {
+    const success = await deleteNoteApi(id);
+    if (success) {
+      // Başarılı - liste otomatik yenilenecek
+      refetch();
+    } else {
+      throw new Error('Not silinemedi');
+    }
   };
 
   return (
-    <NotesContext.Provider value={{ notes, addNote, updateNote, deleteNote }}>
+    <NotesContext.Provider
+      value={{
+        notes,
+        loading: loading || creating || updating || deleting,
+        error: notesError,
+        addNote,
+        updateNote,
+        deleteNote,
+        refetch,
+      }}
+    >
       {children}
     </NotesContext.Provider>
   );

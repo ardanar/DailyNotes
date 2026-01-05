@@ -5,21 +5,22 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useNotes } from '../context/NotesContext';
 import { EnergyLevel, NoteMod } from '../types';
 
 export default function EditNoteScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { notes, updateNote } = useNotes();
+  const { notes, updateNote, deleteNote, loading } = useNotes();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [mod, setMod] = useState<NoteMod>('normal');
@@ -32,23 +33,59 @@ export default function EditNoteScreen() {
       setTitle(note.title);
       setContent(note.content);
       setMod(note.mod);
-      setEnergyLevel(note.energyLevel);
+      setEnergyLevel(note.energy_level);
     }
   }, [note]);
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (!title.trim() || !content.trim() || !id) {
       return;
     }
 
-    updateNote(id, {
-      title: title.trim(),
-      content: content.trim(),
-      mod,
-      energyLevel,
-    });
+    try {
+      await updateNote(id, {
+        title: title.trim(),
+        content: content.trim(),
+        mod,
+        energy_level: energyLevel,
+      });
+      router.back();
+    } catch (error) {
+      // Hata durumunda kullanıcıya gösterilebilir
+      console.error('Not güncellenemedi:', error);
+    }
+  };
 
-    router.back();
+  const handleDelete = async () => {
+    if (!id || !note) {
+      return;
+    }
+
+    // Onay dialog'u göster
+    Alert.alert(
+      'Notu Sil',
+      `"${note.title}" notunu silmek istediğinize emin misiniz?`,
+      [
+        {
+          text: 'İptal',
+          style: 'cancel',
+        },
+        {
+          text: 'Sil',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteNote(id);
+              // Başarılı - ana sayfaya dön
+              router.back();
+            } catch (error) {
+              console.error('Not silinirken hata:', error);
+              Alert.alert('Hata', 'Not silinirken bir hata oluştu.');
+            }
+          },
+        },
+      ]
+    );
   };
 
   if (!note) {
@@ -62,7 +99,7 @@ export default function EditNoteScreen() {
             <Ionicons name="arrow-back" size={24} color="#111827" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Not Bulunamadı</Text>
-          <View style={styles.placeholder} />
+          <View style={styles.deleteButton} />
         </View>
       </View>
     );
@@ -95,7 +132,13 @@ export default function EditNoteScreen() {
           <Ionicons name="arrow-back" size={24} color="#111827" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Notu Düzenle</Text>
-        <View style={styles.placeholder} />
+        <TouchableOpacity
+          onPress={handleDelete}
+          style={styles.deleteButton}
+          disabled={loading}
+        >
+          <Ionicons name="trash-outline" size={24} color="#EF4444" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -187,9 +230,10 @@ export default function EditNoteScreen() {
 
             {/* Update Button */}
             <AuthButton
-              title="Güncelle"
+              title={loading ? "Güncelleniyor..." : "Güncelle"}
               onPress={handleUpdate}
               style={styles.updateButton}
+              disabled={loading}
             />
           </View>
         </View>
@@ -237,8 +281,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#111827',
   },
-  placeholder: {
+  deleteButton: {
     width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   form: {
     flex: 1,

@@ -6,15 +6,37 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, Touchable
 import AuthButton from '../components/AuthButton';
 import AuthInput from '../components/AuthInput';
 import AuthPasswordInput from '../components/AuthPasswordInput';
+import { useRegister } from '../hooks';
 
 export default function RegisterScreen() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const { register, loading, error } = useRegister();
 
-  const handleRegister = () => {
-    console.log('Register:', { fullName, email, password, confirmPassword });
+  const handleRegister = async () => {
+    setPasswordError(null);
+
+    if (!fullName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setPasswordError('Şifreler eşleşmiyor. Lütfen tekrar kontrol edin.');
+      return;
+    }
+
+    const response = await register({
+      full_name: fullName.trim(),
+      email: email.trim(),
+      password: password.trim(),
+    });
+
+    if (response) {
+      router.replace('/login');
+    }
   };
 
   return (
@@ -70,11 +92,35 @@ export default function RegisterScreen() {
               label="Şifre Tekrar"
               placeholder="Şifrenizi tekrar girin"
               value={confirmPassword}
-              onChangeText={setConfirmPassword}
+              onChangeText={(text) => {
+                setConfirmPassword(text);
+                // Şifre değiştiğinde hata mesajını temizle
+                if (passwordError) {
+                  setPasswordError(null);
+                }
+              }}
             />
 
+            {/* Password Mismatch Error */}
+            {passwordError && (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{passwordError}</Text>
+              </View>
+            )}
+
+            {/* API Error Message */}
+            {error && (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error.message}</Text>
+              </View>
+            )}
+
             {/* Register Button */}
-            <AuthButton title="Kayıt Ol" onPress={handleRegister} />
+            <AuthButton
+              title={loading ? "Kayıt yapılıyor..." : "Kayıt Ol"}
+              onPress={handleRegister}
+              disabled={loading}
+            />
 
             {/* Login Link */}
             <View style={styles.loginContainer}>
@@ -134,5 +180,16 @@ const styles = StyleSheet.create({
     color: '#2563EB',
     fontWeight: '600',
     fontSize: 14,
+  },
+  errorContainer: {
+    backgroundColor: '#FEE2E2',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  errorText: {
+    color: '#DC2626',
+    fontSize: 14,
+    textAlign: 'center',
   },
 });
