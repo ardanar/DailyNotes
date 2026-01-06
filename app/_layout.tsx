@@ -2,7 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-import '../global.css';
+import '@/shared/styles/global.css';
 
 import { NotesProvider } from '@/features/notes/context/NotesContext';
 import { useColorScheme } from '@/shared/hooks/use-color-scheme';

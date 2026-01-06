@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -18,6 +17,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNotes } from '../context/NotesContext';
 import { EnergyLevel, NoteMod } from '../types';
+import { editNoteScreenStyles } from '../styles';
 
 export default function EditNoteScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -107,16 +107,16 @@ export default function EditNoteScreen() {
 
   if (!note) {
     return (
-      <View style={styles.container}>
-        <View style={styles.header}>
+      <View style={editNoteScreenStyles.container}>
+        <View style={editNoteScreenStyles.header}>
           <TouchableOpacity
             onPress={() => router.back()}
-            style={styles.backButton}
+            style={editNoteScreenStyles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color="#111827" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Not Bulunamadı</Text>
-          <View style={styles.deleteButton} />
+          <Text style={editNoteScreenStyles.headerTitle}>Not Bulunamadı</Text>
+          <View style={editNoteScreenStyles.deleteButton} />
         </View>
       </View>
     );
@@ -135,24 +135,24 @@ export default function EditNoteScreen() {
   ];
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={editNoteScreenStyles.safeArea}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}
+        style={editNoteScreenStyles.container}
       >
         <StatusBar style="auto" />
         {/* Header */}
-        <View style={styles.header}>
+        <View style={editNoteScreenStyles.header}>
           <TouchableOpacity
             onPress={() => router.back()}
-            style={styles.backButton}
+            style={editNoteScreenStyles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color="#111827" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Notu Düzenle</Text>
+          <Text style={editNoteScreenStyles.headerTitle}>Notu Düzenle</Text>
           <TouchableOpacity
             onPress={handleDelete}
-            style={styles.deleteButton}
+            style={editNoteScreenStyles.deleteButton}
             disabled={loading}
           >
             <Ionicons name="trash-outline" size={24} color="#EF4444" />
@@ -160,16 +160,16 @@ export default function EditNoteScreen() {
         </View>
 
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={editNoteScreenStyles.scrollContent}
           keyboardShouldPersistTaps="handled"
-          style={styles.scrollView}
+          style={editNoteScreenStyles.scrollView}
         >
-          <View style={styles.content}>
+          <View style={editNoteScreenStyles.content}>
             {/* Form */}
-            <View style={styles.form}>
-              <View style={styles.formContent}>
+            <View style={editNoteScreenStyles.form}>
+              <View style={editNoteScreenStyles.formContent}>
                 {/* Title Input */}
-                <View style={styles.inputWrapper}>
+                <View style={editNoteScreenStyles.inputWrapper}>
                   <AuthInput
                     label="Başlık"
                     placeholder="Not başlığını girin"
@@ -179,10 +179,10 @@ export default function EditNoteScreen() {
                 </View>
 
                 {/* Content Input */}
-                <View style={styles.textAreaContainer}>
-                  <Text style={styles.label}>Not</Text>
+                <View style={editNoteScreenStyles.textAreaContainer}>
+                  <Text style={editNoteScreenStyles.label}>Not</Text>
                   <TextInput
-                    style={styles.textArea}
+                    style={editNoteScreenStyles.textArea}
                     placeholder="Notunuzu yazın..."
                     placeholderTextColor="#9CA3AF"
                     value={content}
@@ -194,22 +194,22 @@ export default function EditNoteScreen() {
                 </View>
 
                 {/* Mod Selection */}
-                <View style={styles.selectionContainer}>
-                  <Text style={styles.label}>Mod</Text>
-                  <View style={styles.optionsContainer}>
+                <View style={editNoteScreenStyles.selectionContainer}>
+                  <Text style={editNoteScreenStyles.label}>Mod</Text>
+                  <View style={editNoteScreenStyles.optionsContainer}>
                     {modOptions.map((option) => (
                       <TouchableOpacity
                         key={option.value}
                         style={[
-                          styles.optionButton,
-                          mod === option.value && styles.optionButtonActive,
+                          editNoteScreenStyles.optionButton,
+                          mod === option.value && editNoteScreenStyles.optionButtonActive,
                         ]}
                         onPress={() => setMod(option.value)}
                       >
                         <Text
                           style={[
-                            styles.optionText,
-                            mod === option.value && styles.optionTextActive,
+                            editNoteScreenStyles.optionText,
+                            mod === option.value && editNoteScreenStyles.optionTextActive,
                           ]}
                         >
                           {option.label}
@@ -220,22 +220,22 @@ export default function EditNoteScreen() {
                 </View>
 
                 {/* Energy Level Selection */}
-                <View style={styles.selectionContainer}>
-                  <Text style={styles.label}>Enerji Durumu</Text>
-                  <View style={styles.optionsContainer}>
+                <View style={editNoteScreenStyles.selectionContainer}>
+                  <Text style={editNoteScreenStyles.label}>Enerji Durumu</Text>
+                  <View style={editNoteScreenStyles.optionsContainer}>
                     {energyOptions.map((option) => (
                       <TouchableOpacity
                         key={option.value}
                         style={[
-                          styles.optionButton,
-                          energyLevel === option.value && styles.optionButtonActive,
+                          editNoteScreenStyles.optionButton,
+                          energyLevel === option.value && editNoteScreenStyles.optionButtonActive,
                         ]}
                         onPress={() => setEnergyLevel(option.value)}
                       >
                         <Text
                           style={[
-                            styles.optionText,
-                            energyLevel === option.value && styles.optionTextActive,
+                            editNoteScreenStyles.optionText,
+                            energyLevel === option.value && editNoteScreenStyles.optionTextActive,
                           ]}
                         >
                           {option.label}
@@ -248,8 +248,8 @@ export default function EditNoteScreen() {
 
               {/* Error Message */}
               {errorMessage && (
-                <View style={styles.errorContainer}>
-                  <Text style={styles.errorText}>{errorMessage}</Text>
+                <View style={editNoteScreenStyles.errorContainer}>
+                  <Text style={editNoteScreenStyles.errorText}>{errorMessage}</Text>
                 </View>
               )}
 
@@ -257,7 +257,7 @@ export default function EditNoteScreen() {
               <AuthButton
                 title={loading ? "Güncelleniyor..." : "Güncelle"}
                 onPress={handleUpdate}
-                style={styles.updateButton}
+                style={editNoteScreenStyles.updateButton}
                 disabled={loading}
               />
             </View>
@@ -267,134 +267,4 @@ export default function EditNoteScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 48,
-    maxWidth: 600,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 16,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-  },
-  deleteButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  form: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  formContent: {
-    gap: 20,
-  },
-  inputWrapper: {
-    marginBottom: -4,
-  },
-  textAreaContainer: {
-    marginBottom: -4,
-  },
-  textArea: {
-    width: '100%',
-    minHeight: 120,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#F9FAFB',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 12,
-    fontSize: 16,
-    color: '#111827',
-    textAlignVertical: 'top',
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 8,
-  },
-  selectionContainer: {
-    marginBottom: 8,
-  },
-  optionsContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
-  },
-  optionButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    backgroundColor: '#F9FAFB',
-    alignItems: 'center',
-  },
-  optionButtonActive: {
-    backgroundColor: '#2563EB',
-    borderColor: '#2563EB',
-  },
-  optionText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#6B7280',
-  },
-  optionTextActive: {
-    color: '#FFFFFF',
-  },
-  updateButton: {
-    marginTop: 16,
-  },
-  errorContainer: {
-    backgroundColor: '#FEE2E2',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  errorText: {
-    color: '#DC2626',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-});
 

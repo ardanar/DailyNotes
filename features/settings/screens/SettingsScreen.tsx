@@ -3,8 +3,10 @@ import { useProfile } from '@/features/auth/hooks';
 import { useNotes } from '@/features/notes/context/NotesContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { settingsScreenStyles } from '../styles';
 
 export default function SettingsScreen() {
   const { refetch } = useNotes();
@@ -20,40 +22,40 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+    <SafeAreaView style={settingsScreenStyles.safeArea}>
+      <View style={settingsScreenStyles.container}>
         {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
-            <Text style={styles.headerTitle}>Ayarlar</Text>
+        <View style={settingsScreenStyles.header}>
+          <View style={settingsScreenStyles.headerContent}>
+            <Text style={settingsScreenStyles.headerTitle}>Ayarlar</Text>
           </View>
         </View>
 
         <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          style={settingsScreenStyles.scrollView}
+          contentContainerStyle={settingsScreenStyles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.contentInner}>
+          <View style={settingsScreenStyles.contentInner}>
             {/* User Info Section */}
-            <View style={styles.userInfoSection}>
-              <View style={styles.avatarContainer}>
+            <View style={settingsScreenStyles.userInfoSection}>
+              <View style={settingsScreenStyles.avatarContainer}>
                 <Ionicons name="person" size={40} color="#2563EB" />
               </View>
-              <Text style={styles.userName}>{profile?.full_name || 'Kullanıcı'}</Text>
-              <Text style={styles.userEmail}>{profile?.email || 'Email bilgisi yüklenemedi'}</Text>
+              <Text style={settingsScreenStyles.userName}>{profile?.full_name || 'Kullanıcı'}</Text>
+              <Text style={settingsScreenStyles.userEmail}>{profile?.email || 'Email bilgisi yüklenemedi'}</Text>
             </View>
 
             {/* Spacer */}
-            <View style={styles.spacer} />
+            <View style={settingsScreenStyles.spacer} />
 
             {/* Logout Button */}
             <TouchableOpacity
-              style={styles.logoutButton}
+              style={settingsScreenStyles.logoutButton}
               onPress={handleLogout}
               activeOpacity={0.7}
             >
-              <Text style={styles.logoutButtonText}>Çıkış Yap</Text>
+              <Text style={settingsScreenStyles.logoutButtonText}>Çıkış Yap</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -62,87 +64,3 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 24,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  headerContent: {
-    maxWidth: 600,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#111827',
-    letterSpacing: -0.5,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    padding: 24,
-    justifyContent: 'space-between',
-  },
-  contentInner: {
-    flex: 1,
-    maxWidth: 600,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  userInfoSection: {
-    alignItems: 'center',
-    paddingTop: 32,
-  },
-  spacer: {
-    flex: 1,
-  },
-  avatarContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#EFF6FF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 4,
-  },
-  userEmail: {
-    fontSize: 14,
-    color: '#6B7280',
-  },
-  loadingIndicator: {
-    marginVertical: 8,
-  },
-  logoutButton: {
-    paddingVertical: 16,
-    borderRadius: 12,
-    backgroundColor: '#EF4444',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  logoutButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

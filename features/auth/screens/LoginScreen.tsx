@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useNotes } from '@/features/notes/context/NotesContext';
@@ -9,6 +9,7 @@ import AuthButton from '../components/AuthButton';
 import AuthInput from '../components/AuthInput';
 import AuthPasswordInput from '../components/AuthPasswordInput';
 import { useLogin } from '../hooks';
+import { loginScreenStyles } from '../styles';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -133,25 +134,25 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={loginScreenStyles.safeArea}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}
+        style={loginScreenStyles.container}
       >
         <StatusBar style="auto" />
         <ScrollView 
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={loginScreenStyles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.content}>
+          <View style={loginScreenStyles.content}>
             {/* Header */}
-            <View style={styles.header}>
-              <Text style={styles.title}>Hoş Geldiniz</Text>
-              <Text style={styles.subtitle}>Giriş yaparak devam edin</Text>
+            <View style={loginScreenStyles.header}>
+              <Text style={loginScreenStyles.title}>Hoş Geldiniz</Text>
+              <Text style={loginScreenStyles.subtitle}>Giriş yaparak devam edin</Text>
             </View>
 
             {/* Form */}
-            <View style={styles.form}>
+            <View style={loginScreenStyles.form}>
               {/* Email Input */}
               <AuthInput
                 label="E-posta"
@@ -180,14 +181,14 @@ export default function LoginScreen() {
               />
 
               {/* Forgot Password */}
-              <TouchableOpacity style={styles.forgotPassword}>
-                <Text style={styles.forgotPasswordText}>Şifremi Unuttum</Text>
+              <TouchableOpacity style={loginScreenStyles.forgotPassword}>
+                <Text style={loginScreenStyles.forgotPasswordText}>Şifremi Unuttum</Text>
               </TouchableOpacity>
 
               {/* General Error Message */}
               {generalError && (
-                <View style={styles.errorContainer}>
-                  <Text style={styles.errorText}>{generalError}</Text>
+                <View style={loginScreenStyles.errorContainer}>
+                  <Text style={loginScreenStyles.errorText}>{generalError}</Text>
                 </View>
               )}
 
@@ -199,10 +200,10 @@ export default function LoginScreen() {
               />
 
               {/* Register Link */}
-              <View style={styles.registerContainer}>
-                <Text style={styles.registerText}>Hesabınız yok mu? </Text>
+              <View style={loginScreenStyles.registerContainer}>
+                <Text style={loginScreenStyles.registerText}>Hesabınız yok mu? </Text>
                 <TouchableOpacity onPress={() => router.push('/register')}>
-                  <Text style={styles.registerLink}>Kayıt Ol</Text>
+                  <Text style={loginScreenStyles.registerLink}>Kayıt Ol</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -213,75 +214,3 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 48,
-    maxWidth: 600,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  header: {
-    marginBottom: 48,
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6B7280',
-  },
-  form: {
-    gap: 20,
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-  },
-  forgotPasswordText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#2563EB',
-  },
-  registerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  registerText: {
-    color: '#6B7280',
-    fontSize: 14,
-  },
-  registerLink: {
-    color: '#2563EB',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  errorContainer: {
-    backgroundColor: '#FEE2E2',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  errorText: {
-    color: '#DC2626',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-});

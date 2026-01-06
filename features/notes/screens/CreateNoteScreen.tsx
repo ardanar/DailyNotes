@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -16,6 +15,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNotes } from '../context/NotesContext';
+import { createNoteScreenStyles } from '../styles';
 import { EnergyLevel, NoteMod } from '../types';
 
 export default function CreateNoteScreen() {
@@ -73,34 +73,34 @@ export default function CreateNoteScreen() {
   ];
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={createNoteScreenStyles.safeArea}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}
+        style={createNoteScreenStyles.container}
       >
         <StatusBar style="auto" />
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={createNoteScreenStyles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.content}>
+          <View style={createNoteScreenStyles.content}>
             {/* Header */}
-            <View style={styles.header}>
+            <View style={createNoteScreenStyles.header}>
               <TouchableOpacity
                 onPress={() => router.back()}
-                style={styles.backButton}
+                style={createNoteScreenStyles.backButton}
               >
                 <Ionicons name="arrow-back" size={24} color="#111827" />
               </TouchableOpacity>
-              <Text style={styles.headerTitle}>Yeni Not</Text>
-              <View style={styles.placeholder} />
+              <Text style={createNoteScreenStyles.headerTitle}>Yeni Not</Text>
+              <View style={createNoteScreenStyles.placeholder} />
             </View>
 
             {/* Form */}
-            <View style={styles.form}>
-              <View style={styles.formContent}>
+            <View style={createNoteScreenStyles.form}>
+              <View style={createNoteScreenStyles.formContent}>
                 {/* Title Input */}
-                <View style={styles.inputWrapper}>
+                <View style={createNoteScreenStyles.inputWrapper}>
                   <AuthInput
                     label="Başlık"
                     placeholder="Not başlığını girin"
@@ -110,10 +110,10 @@ export default function CreateNoteScreen() {
                 </View>
 
                 {/* Content Input */}
-                <View style={styles.textAreaContainer}>
-                  <Text style={styles.label}>Not</Text>
+                <View style={createNoteScreenStyles.textAreaContainer}>
+                  <Text style={createNoteScreenStyles.label}>Not</Text>
                   <TextInput
-                    style={styles.textArea}
+                    style={createNoteScreenStyles.textArea}
                     placeholder="Notunuzu yazın..."
                     placeholderTextColor="#9CA3AF"
                     value={content}
@@ -125,22 +125,22 @@ export default function CreateNoteScreen() {
                 </View>
 
                 {/* Mod Selection */}
-                <View style={styles.selectionContainer}>
-                  <Text style={styles.label}>Mod</Text>
-                  <View style={styles.optionsContainer}>
+                <View style={createNoteScreenStyles.selectionContainer}>
+                  <Text style={createNoteScreenStyles.label}>Mod</Text>
+                  <View style={createNoteScreenStyles.optionsContainer}>
                     {modOptions.map((option) => (
                       <TouchableOpacity
                         key={option.value}
                         style={[
-                          styles.optionButton,
-                          mod === option.value && styles.optionButtonActive,
+                          createNoteScreenStyles.optionButton,
+                          mod === option.value && createNoteScreenStyles.optionButtonActive,
                         ]}
                         onPress={() => setMod(option.value)}
                       >
                         <Text
                           style={[
-                            styles.optionText,
-                            mod === option.value && styles.optionTextActive,
+                            createNoteScreenStyles.optionText,
+                            mod === option.value && createNoteScreenStyles.optionTextActive,
                           ]}
                         >
                           {option.label}
@@ -151,22 +151,22 @@ export default function CreateNoteScreen() {
                 </View>
 
                 {/* Energy Level Selection */}
-                <View style={styles.selectionContainer}>
-                  <Text style={styles.label}>Enerji Durumu</Text>
-                  <View style={styles.optionsContainer}>
+                <View style={createNoteScreenStyles.selectionContainer}>
+                  <Text style={createNoteScreenStyles.label}>Enerji Durumu</Text>
+                  <View style={createNoteScreenStyles.optionsContainer}>
                     {energyOptions.map((option) => (
                       <TouchableOpacity
                         key={option.value}
                         style={[
-                          styles.optionButton,
-                          energyLevel === option.value && styles.optionButtonActive,
+                          createNoteScreenStyles.optionButton,
+                          energyLevel === option.value && createNoteScreenStyles.optionButtonActive,
                         ]}
                         onPress={() => setEnergyLevel(option.value)}
                       >
                         <Text
                           style={[
-                            styles.optionText,
-                            energyLevel === option.value && styles.optionTextActive,
+                            createNoteScreenStyles.optionText,
+                            energyLevel === option.value && createNoteScreenStyles.optionTextActive,
                           ]}
                         >
                           {option.label}
@@ -179,8 +179,8 @@ export default function CreateNoteScreen() {
 
               {/* Error Message */}
               {errorMessage && (
-                <View style={styles.errorContainer}>
-                  <Text style={styles.errorText}>{errorMessage}</Text>
+                <View style={createNoteScreenStyles.errorContainer}>
+                  <Text style={createNoteScreenStyles.errorText}>{errorMessage}</Text>
                 </View>
               )}
 
@@ -188,7 +188,7 @@ export default function CreateNoteScreen() {
               <AuthButton
                 title={loading ? "Oluşturuluyor..." : "Oluştur"}
                 onPress={handleCreate}
-                style={styles.createButton}
+                style={createNoteScreenStyles.createButton}
                 disabled={loading}
               />
             </View>
@@ -198,123 +198,4 @@ export default function CreateNoteScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 48,
-    maxWidth: 600,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-  },
-  placeholder: {
-    width: 40,
-  },
-  form: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  formContent: {
-    gap: 20,
-  },
-  inputWrapper: {
-    marginBottom: -4,
-  },
-  textAreaContainer: {
-    marginBottom: -4,
-  },
-  textArea: {
-    width: '100%',
-    minHeight: 120,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#F9FAFB',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 12,
-    fontSize: 16,
-    color: '#111827',
-    textAlignVertical: 'top',
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 8,
-  },
-  selectionContainer: {
-    marginBottom: 16,
-  },
-  optionsContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
-  },
-  optionButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    backgroundColor: '#F9FAFB',
-    alignItems: 'center',
-  },
-  optionButtonActive: {
-    backgroundColor: '#2563EB',
-    borderColor: '#2563EB',
-  },
-  optionText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#6B7280',
-  },
-  optionTextActive: {
-    color: '#FFFFFF',
-  },
-  createButton: {
-    marginTop: 24,
-  },
-  errorContainer: {
-    backgroundColor: '#FEE2E2',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  errorText: {
-    color: '#DC2626',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-});
 

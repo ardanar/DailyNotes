@@ -1,13 +1,14 @@
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AuthButton from '../components/AuthButton';
 import AuthInput from '../components/AuthInput';
 import AuthPasswordInput from '../components/AuthPasswordInput';
 import { useRegister } from '../hooks';
+import { registerScreenStyles } from '../styles';
 
 export default function RegisterScreen() {
   const [fullName, setFullName] = useState('');
@@ -156,25 +157,25 @@ export default function RegisterScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={registerScreenStyles.safeArea}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}
+        style={registerScreenStyles.container}
       >
         <StatusBar style="auto" />
         <ScrollView 
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={registerScreenStyles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.content}>
+          <View style={registerScreenStyles.content}>
             {/* Header */}
-            <View style={styles.header}>
-              <Text style={styles.title}>Kayıt Ol</Text>
-              <Text style={styles.subtitle}>Hesabınızı oluşturun</Text>
+            <View style={registerScreenStyles.header}>
+              <Text style={registerScreenStyles.title}>Kayıt Ol</Text>
+              <Text style={registerScreenStyles.subtitle}>Hesabınızı oluşturun</Text>
             </View>
 
             {/* Form */}
-            <View style={styles.form}>
+            <View style={registerScreenStyles.form}>
               {/* Full Name Input */}
               <AuthInput
                 label="Ad Soyad"
@@ -240,8 +241,8 @@ export default function RegisterScreen() {
 
               {/* General Error Message */}
               {generalError && (
-                <View style={styles.errorContainer}>
-                  <Text style={styles.errorText}>{generalError}</Text>
+                <View style={registerScreenStyles.errorContainer}>
+                  <Text style={registerScreenStyles.errorText}>{generalError}</Text>
                 </View>
               )}
 
@@ -253,10 +254,10 @@ export default function RegisterScreen() {
               />
 
               {/* Login Link */}
-              <View style={styles.loginContainer}>
-                <Text style={styles.loginText}>Zaten hesabınız var mı? </Text>
+              <View style={registerScreenStyles.loginContainer}>
+                <Text style={registerScreenStyles.loginText}>Zaten hesabınız var mı? </Text>
                 <TouchableOpacity onPress={() => router.push('/login')}>
-                  <Text style={styles.loginLink}>Giriş Yap</Text>
+                  <Text style={registerScreenStyles.loginLink}>Giriş Yap</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -267,67 +268,3 @@ export default function RegisterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 48,
-    maxWidth: 600,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  header: {
-    marginBottom: 48,
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6B7280',
-  },
-  form: {
-    gap: 20,
-  },
-  loginContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  loginText: {
-    color: '#6B7280',
-    fontSize: 14,
-  },
-  loginLink: {
-    color: '#2563EB',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  errorContainer: {
-    backgroundColor: '#FEE2E2',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  errorText: {
-    color: '#DC2626',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-});
