@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "DailyNotes",
-    "slug": "DailyNotes",
+    "name": "Notenza",
+    "slug": "notenza",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "dailynotes",
+    "scheme": "notenza",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

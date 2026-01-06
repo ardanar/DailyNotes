@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AuthButton from '../components/AuthButton';
 import AuthInput from '../components/AuthInput';
@@ -155,116 +156,122 @@ export default function RegisterScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <StatusBar style="auto" />
-      <ScrollView 
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
       >
-        <View style={styles.content}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Kayıt Ol</Text>
-            <Text style={styles.subtitle}>Hesabınızı oluşturun</Text>
-          </View>
+        <StatusBar style="auto" />
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.content}>
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={styles.title}>Kayıt Ol</Text>
+              <Text style={styles.subtitle}>Hesabınızı oluşturun</Text>
+            </View>
 
-          {/* Form */}
-          <View style={styles.form}>
-            {/* Full Name Input */}
-            <AuthInput
-              label="Ad Soyad"
-              placeholder="Adınız Soyadınız"
-              value={fullName}
-              onChangeText={(text) => {
-                setFullName(text);
-                if (fullNameError) setFullNameError(null);
-              }}
-              autoCapitalize="words"
-              autoComplete="name"
-              error={fullNameError || undefined}
-            />
+            {/* Form */}
+            <View style={styles.form}>
+              {/* Full Name Input */}
+              <AuthInput
+                label="Ad Soyad"
+                placeholder="Adınız Soyadınız"
+                value={fullName}
+                onChangeText={(text) => {
+                  setFullName(text);
+                  if (fullNameError) setFullNameError(null);
+                }}
+                autoCapitalize="words"
+                autoComplete="name"
+                error={fullNameError || undefined}
+              />
 
-            {/* Email Input */}
-            <AuthInput
-              label="E-posta"
-              placeholder="ornek@email.com"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                if (emailError) setEmailError(null);
-              }}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              error={emailError || undefined}
-            />
+              {/* Email Input */}
+              <AuthInput
+                label="E-posta"
+                placeholder="ornek@email.com"
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  if (emailError) setEmailError(null);
+                }}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
+                error={emailError || undefined}
+              />
 
-            {/* Password Input */}
-            <AuthPasswordInput
-              label="Şifre"
-              placeholder="Şifrenizi girin"
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                if (passwordError) setPasswordError(null);
-                // Şifre değiştiğinde confirm password hatasını da kontrol et
-                if (confirmPassword && text !== confirmPassword) {
-                  setConfirmPasswordError('Şifreler eşleşmiyor');
-                } else if (confirmPasswordError && text === confirmPassword) {
-                  setConfirmPasswordError(null);
-                }
-              }}
-              error={passwordError || undefined}
-            />
+              {/* Password Input */}
+              <AuthPasswordInput
+                label="Şifre"
+                placeholder="Şifrenizi girin"
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  if (passwordError) setPasswordError(null);
+                  // Şifre değiştiğinde confirm password hatasını da kontrol et
+                  if (confirmPassword && text !== confirmPassword) {
+                    setConfirmPasswordError('Şifreler eşleşmiyor');
+                  } else if (confirmPasswordError && text === confirmPassword) {
+                    setConfirmPasswordError(null);
+                  }
+                }}
+                error={passwordError || undefined}
+              />
 
-            {/* Confirm Password Input */}
-            <AuthPasswordInput
-              label="Şifre Tekrar"
-              placeholder="Şifrenizi tekrar girin"
-              value={confirmPassword}
-              onChangeText={(text) => {
-                setConfirmPassword(text);
-                if (confirmPasswordError) setConfirmPasswordError(null);
-                // Şifreler eşleşmiyorsa hata göster
-                if (password && text !== password) {
-                  setConfirmPasswordError('Şifreler eşleşmiyor');
-                }
-              }}
-              error={confirmPasswordError || undefined}
-            />
+              {/* Confirm Password Input */}
+              <AuthPasswordInput
+                label="Şifre Tekrar"
+                placeholder="Şifrenizi tekrar girin"
+                value={confirmPassword}
+                onChangeText={(text) => {
+                  setConfirmPassword(text);
+                  if (confirmPasswordError) setConfirmPasswordError(null);
+                  // Şifreler eşleşmiyorsa hata göster
+                  if (password && text !== password) {
+                    setConfirmPasswordError('Şifreler eşleşmiyor');
+                  }
+                }}
+                error={confirmPasswordError || undefined}
+              />
 
-            {/* General Error Message */}
-            {generalError && (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{generalError}</Text>
+              {/* General Error Message */}
+              {generalError && (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorText}>{generalError}</Text>
+                </View>
+              )}
+
+              {/* Register Button */}
+              <AuthButton
+                title={loading ? "Kayıt yapılıyor..." : "Kayıt Ol"}
+                onPress={handleRegister}
+                disabled={loading}
+              />
+
+              {/* Login Link */}
+              <View style={styles.loginContainer}>
+                <Text style={styles.loginText}>Zaten hesabınız var mı? </Text>
+                <TouchableOpacity onPress={() => router.push('/login')}>
+                  <Text style={styles.loginLink}>Giriş Yap</Text>
+                </TouchableOpacity>
               </View>
-            )}
-
-            {/* Register Button */}
-            <AuthButton
-              title={loading ? "Kayıt yapılıyor..." : "Kayıt Ol"}
-              onPress={handleRegister}
-              disabled={loading}
-            />
-
-            {/* Login Link */}
-            <View style={styles.loginContainer}>
-              <Text style={styles.loginText}>Zaten hesabınız var mı? </Text>
-              <TouchableOpacity onPress={() => router.push('/login')}>
-                <Text style={styles.loginLink}>Giriş Yap</Text>
-              </TouchableOpacity>
             </View>
           </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -277,6 +284,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 24,
     paddingVertical: 48,
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
   },
   header: {
     marginBottom: 48,

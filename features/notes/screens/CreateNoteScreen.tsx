@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNotes } from '../context/NotesContext';
 import { EnergyLevel, NoteMod } from '../types';
 
@@ -72,131 +73,137 @@ export default function CreateNoteScreen() {
   ];
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <StatusBar style="auto" />
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
       >
-        <View style={styles.content}>
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={styles.backButton}
-            >
-              <Ionicons name="arrow-back" size={24} color="#111827" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Yeni Not</Text>
-            <View style={styles.placeholder} />
-          </View>
-
-          {/* Form */}
-          <View style={styles.form}>
-            <View style={styles.formContent}>
-              {/* Title Input */}
-              <View style={styles.inputWrapper}>
-                <AuthInput
-                  label="Başlık"
-                  placeholder="Not başlığını girin"
-                  value={title}
-                  onChangeText={setTitle}
-                />
-              </View>
-
-              {/* Content Input */}
-              <View style={styles.textAreaContainer}>
-                <Text style={styles.label}>Not</Text>
-                <TextInput
-                  style={styles.textArea}
-                  placeholder="Notunuzu yazın..."
-                  placeholderTextColor="#9CA3AF"
-                  value={content}
-                  onChangeText={setContent}
-                  multiline
-                  numberOfLines={8}
-                  textAlignVertical="top"
-                />
-              </View>
-
-              {/* Mod Selection */}
-              <View style={styles.selectionContainer}>
-                <Text style={styles.label}>Mod</Text>
-                <View style={styles.optionsContainer}>
-                  {modOptions.map((option) => (
-                    <TouchableOpacity
-                      key={option.value}
-                      style={[
-                        styles.optionButton,
-                        mod === option.value && styles.optionButtonActive,
-                      ]}
-                      onPress={() => setMod(option.value)}
-                    >
-                      <Text
-                        style={[
-                          styles.optionText,
-                          mod === option.value && styles.optionTextActive,
-                        ]}
-                      >
-                        {option.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-
-              {/* Energy Level Selection */}
-              <View style={styles.selectionContainer}>
-                <Text style={styles.label}>Enerji Durumu</Text>
-                <View style={styles.optionsContainer}>
-                  {energyOptions.map((option) => (
-                    <TouchableOpacity
-                      key={option.value}
-                      style={[
-                        styles.optionButton,
-                        energyLevel === option.value && styles.optionButtonActive,
-                      ]}
-                      onPress={() => setEnergyLevel(option.value)}
-                    >
-                      <Text
-                        style={[
-                          styles.optionText,
-                          energyLevel === option.value && styles.optionTextActive,
-                        ]}
-                      >
-                        {option.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
+        <StatusBar style="auto" />
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.content}>
+            {/* Header */}
+            <View style={styles.header}>
+              <TouchableOpacity
+                onPress={() => router.back()}
+                style={styles.backButton}
+              >
+                <Ionicons name="arrow-back" size={24} color="#111827" />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Yeni Not</Text>
+              <View style={styles.placeholder} />
             </View>
 
-            {/* Error Message */}
-            {errorMessage && (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{errorMessage}</Text>
-              </View>
-            )}
+            {/* Form */}
+            <View style={styles.form}>
+              <View style={styles.formContent}>
+                {/* Title Input */}
+                <View style={styles.inputWrapper}>
+                  <AuthInput
+                    label="Başlık"
+                    placeholder="Not başlığını girin"
+                    value={title}
+                    onChangeText={setTitle}
+                  />
+                </View>
 
-            {/* Create Button */}
-            <AuthButton
-              title={loading ? "Oluşturuluyor..." : "Oluştur"}
-              onPress={handleCreate}
-              style={styles.createButton}
-              disabled={loading}
-            />
+                {/* Content Input */}
+                <View style={styles.textAreaContainer}>
+                  <Text style={styles.label}>Not</Text>
+                  <TextInput
+                    style={styles.textArea}
+                    placeholder="Notunuzu yazın..."
+                    placeholderTextColor="#9CA3AF"
+                    value={content}
+                    onChangeText={setContent}
+                    multiline
+                    numberOfLines={8}
+                    textAlignVertical="top"
+                  />
+                </View>
+
+                {/* Mod Selection */}
+                <View style={styles.selectionContainer}>
+                  <Text style={styles.label}>Mod</Text>
+                  <View style={styles.optionsContainer}>
+                    {modOptions.map((option) => (
+                      <TouchableOpacity
+                        key={option.value}
+                        style={[
+                          styles.optionButton,
+                          mod === option.value && styles.optionButtonActive,
+                        ]}
+                        onPress={() => setMod(option.value)}
+                      >
+                        <Text
+                          style={[
+                            styles.optionText,
+                            mod === option.value && styles.optionTextActive,
+                          ]}
+                        >
+                          {option.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+
+                {/* Energy Level Selection */}
+                <View style={styles.selectionContainer}>
+                  <Text style={styles.label}>Enerji Durumu</Text>
+                  <View style={styles.optionsContainer}>
+                    {energyOptions.map((option) => (
+                      <TouchableOpacity
+                        key={option.value}
+                        style={[
+                          styles.optionButton,
+                          energyLevel === option.value && styles.optionButtonActive,
+                        ]}
+                        onPress={() => setEnergyLevel(option.value)}
+                      >
+                        <Text
+                          style={[
+                            styles.optionText,
+                            energyLevel === option.value && styles.optionTextActive,
+                          ]}
+                        >
+                          {option.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              </View>
+
+              {/* Error Message */}
+              {errorMessage && (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorText}>{errorMessage}</Text>
+                </View>
+              )}
+
+              {/* Create Button */}
+              <AuthButton
+                title={loading ? "Oluşturuluyor..." : "Oluştur"}
+                onPress={handleCreate}
+                style={styles.createButton}
+                disabled={loading}
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -209,6 +216,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 60,
     paddingBottom: 48,
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
   },
   header: {
     flexDirection: 'row',

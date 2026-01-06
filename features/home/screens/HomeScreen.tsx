@@ -9,6 +9,7 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const { notes, loading, error, refetch } = useNotes();
@@ -45,63 +46,71 @@ export default function HomeScreen() {
   );
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Günlük Notlarım</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>Günlük Notlarım</Text>
+          </View>
+        </View>
+
+        {/* Notes List */}
+        {loading && notes.length === 0 ? (
+          <View style={[styles.loadingContainer, styles.maxWidthContainer]}>
+            <ActivityIndicator size="large" color="#2563EB" />
+            <Text style={styles.loadingText}>Notlar yükleniyor...</Text>
+          </View>
+        ) : error ? (
+          <View style={[styles.errorContainer, styles.maxWidthContainer]}>
+            <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
+            <Text style={styles.errorText}>Bir hata oluştu</Text>
+            <Text style={styles.errorSubtext}>{error.message}</Text>
+            <TouchableOpacity
+              style={styles.retryButton}
+              onPress={refetch}
+            >
+              <Text style={styles.retryButtonText}>Tekrar Dene</Text>
+            </TouchableOpacity>
+          </View>
+        ) : notes.length === 0 ? (
+          <View style={[styles.emptyContainer, styles.maxWidthContainer]}>
+            <Ionicons name="document-text-outline" size={64} color="#D1D5DB" />
+            <Text style={styles.emptyText}>Henüz notunuz yok</Text>
+            <Text style={styles.emptySubtext}>
+              Sağ alttaki butona basarak ilk notunuzu oluşturun
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            data={notes}
+            renderItem={renderNoteItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={[styles.listContent, styles.maxWidthContainer]}
+            showsVerticalScrollIndicator={false}
+            refreshing={loading}
+            onRefresh={refetch}
+          />
+        )}
+
+        {/* Floating Action Button */}
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => router.push('/create-note' as any)}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="add" size={28} color="#FFFFFF" />
+        </TouchableOpacity>
       </View>
-
-      {/* Notes List */}
-      {loading && notes.length === 0 ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2563EB" />
-          <Text style={styles.loadingText}>Notlar yükleniyor...</Text>
-        </View>
-      ) : error ? (
-        <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
-          <Text style={styles.errorText}>Bir hata oluştu</Text>
-          <Text style={styles.errorSubtext}>{error.message}</Text>
-          <TouchableOpacity
-            style={styles.retryButton}
-            onPress={refetch}
-          >
-            <Text style={styles.retryButtonText}>Tekrar Dene</Text>
-          </TouchableOpacity>
-        </View>
-      ) : notes.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Ionicons name="document-text-outline" size={64} color="#D1D5DB" />
-          <Text style={styles.emptyText}>Henüz notunuz yok</Text>
-          <Text style={styles.emptySubtext}>
-            Sağ alttaki butona basarak ilk notunuzu oluşturun
-          </Text>
-        </View>
-      ) : (
-        <FlatList
-          data={notes}
-          renderItem={renderNoteItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-          refreshing={loading}
-          onRefresh={refetch}
-        />
-      )}
-
-      {/* Floating Action Button */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => router.push('/create-note' as any)}
-        activeOpacity={0.8}
-      >
-        <Ionicons name="add" size={28} color="#FFFFFF" />
-      </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -113,6 +122,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
+  },
+  headerContent: {
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
   },
   headerTitle: {
     fontSize: 32,
@@ -142,6 +156,11 @@ const styles = StyleSheet.create({
   listContent: {
     padding: 24,
     paddingBottom: 100,
+  },
+  maxWidthContainer: {
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
   },
   noteCard: {
     backgroundColor: '#FFFFFF',

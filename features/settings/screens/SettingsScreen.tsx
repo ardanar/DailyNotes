@@ -4,6 +4,7 @@ import { useNotes } from '@/features/notes/context/NotesContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
   const { refetch } = useNotes();
@@ -19,43 +20,53 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Ayarlar</Text>
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* User Info Section */}
-        <View style={styles.userInfoSection}>
-          <View style={styles.avatarContainer}>
-            <Ionicons name="person" size={40} color="#2563EB" />
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>Ayarlar</Text>
           </View>
-          <Text style={styles.userName}>{profile?.full_name || 'Kullanıcı'}</Text>
-          <Text style={styles.userEmail}>{profile?.email || 'Email bilgisi yüklenemedi'}</Text>
         </View>
 
-        {/* Spacer */}
-        <View style={styles.spacer} />
-
-        {/* Logout Button */}
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={handleLogout}
-          activeOpacity={0.7}
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.logoutButtonText}>Çıkış Yap</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
+          <View style={styles.contentInner}>
+            {/* User Info Section */}
+            <View style={styles.userInfoSection}>
+              <View style={styles.avatarContainer}>
+                <Ionicons name="person" size={40} color="#2563EB" />
+              </View>
+              <Text style={styles.userName}>{profile?.full_name || 'Kullanıcı'}</Text>
+              <Text style={styles.userEmail}>{profile?.email || 'Email bilgisi yüklenemedi'}</Text>
+            </View>
+
+            {/* Spacer */}
+            <View style={styles.spacer} />
+
+            {/* Logout Button */}
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={handleLogout}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.logoutButtonText}>Çıkış Yap</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -67,6 +78,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
+  },
+  headerContent: {
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
   },
   headerTitle: {
     fontSize: 32,
@@ -81,6 +97,12 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 24,
     justifyContent: 'space-between',
+  },
+  contentInner: {
+    flex: 1,
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
   },
   userInfoSection: {
     alignItems: 'center',

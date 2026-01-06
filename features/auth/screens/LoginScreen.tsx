@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useNotes } from '@/features/notes/context/NotesContext';
 import AuthButton from '../components/AuthButton';
@@ -132,85 +133,91 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <StatusBar style="auto" />
-      <ScrollView 
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
       >
-        <View style={styles.content}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Hoş Geldiniz</Text>
-            <Text style={styles.subtitle}>Giriş yaparak devam edin</Text>
-          </View>
+        <StatusBar style="auto" />
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.content}>
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={styles.title}>Hoş Geldiniz</Text>
+              <Text style={styles.subtitle}>Giriş yaparak devam edin</Text>
+            </View>
 
-          {/* Form */}
-          <View style={styles.form}>
-            {/* Email Input */}
-            <AuthInput
-              label="E-posta"
-              placeholder="ornek@email.com"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                if (emailError) setEmailError(null);
-              }}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              error={emailError || undefined}
-            />
+            {/* Form */}
+            <View style={styles.form}>
+              {/* Email Input */}
+              <AuthInput
+                label="E-posta"
+                placeholder="ornek@email.com"
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  if (emailError) setEmailError(null);
+                }}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
+                error={emailError || undefined}
+              />
 
-            {/* Password Input */}
-            <AuthPasswordInput
-              label="Şifre"
-              placeholder="Şifrenizi girin"
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                if (passwordError) setPasswordError(null);
-              }}
-              error={passwordError || undefined}
-            />
+              {/* Password Input */}
+              <AuthPasswordInput
+                label="Şifre"
+                placeholder="Şifrenizi girin"
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  if (passwordError) setPasswordError(null);
+                }}
+                error={passwordError || undefined}
+              />
 
-            {/* Forgot Password */}
-            <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Şifremi Unuttum</Text>
-            </TouchableOpacity>
-
-            {/* General Error Message */}
-            {generalError && (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{generalError}</Text>
-              </View>
-            )}
-
-            {/* Login Button */}
-            <AuthButton
-              title={loading ? "Giriş yapılıyor..." : "Giriş Yap"}
-              onPress={handleLogin}
-              disabled={loading}
-            />
-
-            {/* Register Link */}
-            <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>Hesabınız yok mu? </Text>
-              <TouchableOpacity onPress={() => router.push('/register')}>
-                <Text style={styles.registerLink}>Kayıt Ol</Text>
+              {/* Forgot Password */}
+              <TouchableOpacity style={styles.forgotPassword}>
+                <Text style={styles.forgotPasswordText}>Şifremi Unuttum</Text>
               </TouchableOpacity>
+
+              {/* General Error Message */}
+              {generalError && (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorText}>{generalError}</Text>
+                </View>
+              )}
+
+              {/* Login Button */}
+              <AuthButton
+                title={loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+                onPress={handleLogin}
+                disabled={loading}
+              />
+
+              {/* Register Link */}
+              <View style={styles.registerContainer}>
+                <Text style={styles.registerText}>Hesabınız yok mu? </Text>
+                <TouchableOpacity onPress={() => router.push('/register')}>
+                  <Text style={styles.registerLink}>Kayıt Ol</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -223,6 +230,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 24,
     paddingVertical: 48,
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
   },
   header: {
     marginBottom: 48,
