@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   selectionContainer: {
-    marginBottom: 0,
+    marginBottom: 16,
   },
   optionsContainer: {
     flexDirection: 'row',
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   createButton: {
-    marginTop: 0,
+    marginTop: 24,
   },
   errorContainer: {
     backgroundColor: '#FEE2E2',

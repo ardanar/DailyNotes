@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   selectionContainer: {
-    marginBottom: 0,
+    marginBottom: 8,
   },
   optionsContainer: {
     flexDirection: 'row',
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   updateButton: {
-    marginTop: 0,
+    marginTop: 16,
   },
   errorContainer: {
     backgroundColor: '#FEE2E2',
