@@ -180,11 +180,6 @@ export default function LoginScreen() {
                 error={passwordError || undefined}
               />
 
-              {/* Forgot Password */}
-              <TouchableOpacity style={loginScreenStyles.forgotPassword}>
-                <Text style={loginScreenStyles.forgotPasswordText}>Şifremi Unuttum</Text>
-              </TouchableOpacity>
-
               {/* General Error Message */}
               {generalError && (
                 <View style={loginScreenStyles.errorContainer}>

@@ -11,8 +11,6 @@ export const authApi = {
   async register(data: RegisterRequest): Promise<AuthResponse> {
     try {
       const response = await apiClient.post<AuthResponse>('/auth/register', data);
-      // Kayıt olduktan sonra token kaydedilmez, kullanıcı login sayfasına yönlendirilir
-      // Token sadece login'de kaydedilir
       return response;
     } catch (error: any) {
       // Debug için
